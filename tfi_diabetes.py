@@ -55,15 +55,30 @@ print(data_produccion.shape)
 
 import matplotlib.pyplot as plt
 
+columnas = data_desarrollo.drop(columns="Outcome").columns
+
 fig, axes = plt.subplots(3, 3, figsize=(12, 9))
 
-data_desarrollo.drop(columns="Outcome").hist(
-    figsize=(12, 9),
-    bins=20,
-    ax=axes.flatten()
-)
+axes = axes.flatten()
+
+for i, columna in enumerate(columnas):
+    axes[i].hist(
+        data_desarrollo[columna].dropna(),
+        bins=20,
+        color="steelblue",
+        edgecolor="black"
+    )
+
+    axes[i].set_title(columna)
+    axes[i].set_xlabel(columna)
+    axes[i].set_ylabel("Frecuencia")
+
+# Ocultar el espacio sobrante
+for j in range(len(columnas), len(axes)):
+    axes[j].set_visible(False)
 
 plt.tight_layout()
+
 st.pyplot(fig)
 plt.close(fig)
 
