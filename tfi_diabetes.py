@@ -242,7 +242,6 @@ print("Conjuntos ya reservados:", len(X_train), "entrenamiento;", len(X_test), "
 Primero incluimos una línea base que predice siempre la clase más frecuente. Después comparamos una regresión logística y Random Forest, para probar dos formas distintas de modelar. Para cada una revisamos los hiperparámetros con `GridSearchCV` y cuatro particiones estratificadas. Todas las búsquedas usan únicamente entrenamiento; las transformaciones se ajustan dentro de cada partición.
 """
 
-import  as np
 from sklearn.base import clone
 from sklearn.dummy import DummyClassifier
 from sklearn.linear_model import LogisticRegression
