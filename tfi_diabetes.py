@@ -16,11 +16,11 @@ import matplotlib.pyplot as plt
 
 data = pd.read_csv("archive.zip")
 
-data
+st.dataframe(data, use_container_width=True)
 
 data.info()
 
-data.describe()
+st.dataframe(data.describe(), use_container_width=True)
 
 print("Duplicados:", data.duplicated().sum())
 
@@ -55,9 +55,12 @@ print(data_produccion.shape)
 
 import matplotlib.pyplot as plt
 
+fig, axes = plt.subplots(3, 3, figsize=(12, 9))
+
 data_desarrollo.drop(columns="Outcome").hist(
     figsize=(12, 9),
-    bins=20
+    bins=20,
+    ax=axes.flatten()
 )
 
 plt.tight_layout()
@@ -68,13 +71,17 @@ plt.close(fig)
 
 print(data_desarrollo["Outcome"].value_counts())
 
+fig, ax = plt.subplots(figsize=(7, 4))
+
 data_desarrollo["Outcome"].value_counts().sort_index().plot(
     kind="bar",
-    title="Distribución de Outcome"
+    title="Distribución de Outcome",
+    ax=ax
 )
 
-plt.xlabel("Outcome")
-plt.ylabel("Cantidad de registros")
+ax.set_xlabel("Outcome")
+ax.set_ylabel("Cantidad de registros")
+
 st.pyplot(fig)
 plt.close(fig)
 
@@ -82,15 +89,19 @@ plt.close(fig)
 
 data_desarrollo.groupby("Outcome").mean().round(2)
 
+fig, ax = plt.subplots(figsize=(7, 4))
+
 data_desarrollo.boxplot(
     column="Glucose",
-    by="Outcome"
+    by="Outcome",
+    ax=ax
 )
 
-plt.title("Glucosa según Outcome")
-plt.suptitle("")
-plt.xlabel("Outcome")
-plt.ylabel("Glucose")
+ax.set_title("Glucosa según Outcome")
+fig.suptitle("")
+ax.set_xlabel("Outcome")
+ax.set_ylabel("Glucose")
+
 st.pyplot(fig)
 plt.close(fig)
 
