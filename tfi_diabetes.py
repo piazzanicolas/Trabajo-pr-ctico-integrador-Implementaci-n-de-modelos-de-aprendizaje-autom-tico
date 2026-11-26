@@ -8,6 +8,9 @@ Original file is located at
 """
 
 import pandas as pd
+import streamlit as st
+import numpy as np
+import matplotlib.pyplot as plt
 
 """###Lectura inicial"""
 
@@ -58,7 +61,8 @@ data_desarrollo.drop(columns="Outcome").hist(
 )
 
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
+plt.close(fig)
 
 """###Distribución de la variable objetivo"""
 
@@ -71,7 +75,8 @@ data_desarrollo["Outcome"].value_counts().sort_index().plot(
 
 plt.xlabel("Outcome")
 plt.ylabel("Cantidad de registros")
-plt.show()
+st.pyplot(fig)
+plt.close(fig)
 
 """### Relación de los predictores con la variable objetivo"""
 
@@ -86,7 +91,8 @@ plt.title("Glucosa según Outcome")
 plt.suptitle("")
 plt.xlabel("Outcome")
 plt.ylabel("Glucose")
-plt.show()
+st.pyplot(fig)
+plt.close(fig)
 
 """Los registros con Outcome = 1 presentan, en promedio, valores más elevados de glucosa, IMC y edad. Aunque los promedios todavía incluyen los 0
 
@@ -106,7 +112,7 @@ print("Producción:", data_produccion.shape)
 
 """Separamos las variables predictoras y la variable objetivo"""
 
-import numpy as np
+import  as np
 
 # Separar predictores y variable objetivo
 X_train = data_entrenamiento.drop(columns="Outcome").copy()
@@ -224,7 +230,13 @@ Nos interesa probar las dos preparaciones que ya habíamos planteado: **A**, que
 # Revisamos cuántos ceros hay en las variables de interés.
 ceros = (data_desarrollo[columnas_ceros] == 0).sum().sort_values(ascending=False)
 porcentajes = (ceros / len(data_desarrollo) * 100).round(1)
-display(pd.DataFrame({"Ceros": ceros, "Porcentaje": porcentajes}))
+st.dataframe(
+    pd.DataFrame({
+        "Ceros": ceros,
+        "Porcentaje": porcentajes
+    }),
+    use_container_width=True
+)
 print("Conjuntos ya reservados:", len(X_train), "entrenamiento;", len(X_test), "evaluación;", len(data_produccion), "producción")
 
 """### 3.2. Línea base y comparación de modelos
@@ -232,7 +244,7 @@ print("Conjuntos ya reservados:", len(X_train), "entrenamiento;", len(X_test), "
 Primero incluimos una línea base que predice siempre la clase más frecuente. Después comparamos una regresión logística y Random Forest, para probar dos formas distintas de modelar. Para cada una revisamos los hiperparámetros con `GridSearchCV` y cuatro particiones estratificadas. Todas las búsquedas usan únicamente entrenamiento; las transformaciones se ajustan dentro de cada partición.
 """
 
-import numpy as np
+import  as np
 from sklearn.base import clone
 from sklearn.dummy import DummyClassifier
 from sklearn.linear_model import LogisticRegression
@@ -276,7 +288,7 @@ for nombre, (algoritmo, parametros) in configuraciones.items():
                          "Parámetros": str({k.replace('modelo__',''):v for k,v in busqueda.best_params_.items()})})
 
 resultados_cv = pd.DataFrame(filas_cv).sort_values(["Modelo", "F2 validación"], ascending=[True, False])
-display(resultados_cv.round(3))
+st.dataframe(resultados_cv.round(3), use_container_width=True)
 
 """### 3.3. Resultados de evaluación
 
@@ -315,7 +327,7 @@ for nombre, modelo in modelos_evaluacion.items():
                   "Positivos detectados": int(tp)})
 
 comparacion = pd.DataFrame(filas).set_index("Modelo")
-display(comparacion.round(3))
+st.dataframe(comparacion.round(3), use_container_width=True)
 print("Preparaciones elegidas en entrenamiento:")
 for nombre, (prep, b) in elegidos_por_algoritmo.items():
     print(f"{nombre}: {prep} | F2 validación: {b.best_score_:.3f}")
@@ -333,7 +345,8 @@ for eje, (nombre, matriz) in zip(ejes, matrices.items()):
         for j in range(2):
             eje.text(j, i, str(matriz[i, j]), ha="center", va="center")
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
+plt.close(fig)
 
 """### 3.4. Análisis de errores
 
@@ -357,7 +370,7 @@ for nombre in ["Regresión logística", "Random Forest"]:
                                "IMC medio": casos["BMI"].mean(),
                                "Edad media": casos["Age"].mean()})
 analisis_errores = pd.DataFrame(detalle_errores)
-display(analisis_errores.round(1))
+st.dataframe(analisis_errores.round(1), use_container_width=True)
 
 """### 3.5. Modelo propuesto
 
