@@ -112,8 +112,6 @@ print("Producción:", data_produccion.shape)
 
 """Separamos las variables predictoras y la variable objetivo"""
 
-import  as np
-
 # Separar predictores y variable objetivo
 X_train = data_entrenamiento.drop(columns="Outcome").copy()
 y_train = data_entrenamiento["Outcome"]
